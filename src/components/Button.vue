@@ -1,5 +1,5 @@
 <template>
-  <div class="button">
+  <div class="button" @click="$emit('click')">
     <fa-icon class="button__icon" :icon="`fa-solid fa-${icon}`"/>
     <span class="button__label">{{ label }}</span>
   </div>

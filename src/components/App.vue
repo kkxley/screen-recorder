@@ -4,7 +4,7 @@
       <Button label="cut" icon="vector-square"/>
       <Button label="screen" icon="image"/>
       <Button label="start" icon="play"/>
-      <Button label="exit" icon="door-open"/>
+      <Button label="exit" icon="door-open" @click="closeApp"/>
     </div>
   </div>
 </template>
@@ -16,6 +16,11 @@ export default {
   name: "App",
   components: {
     Button
+  },
+  methods: {
+    closeApp() {
+      window.close();
+    }
   }
 }
 </script>
