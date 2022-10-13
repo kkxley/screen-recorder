@@ -1,11 +1,11 @@
-const {app, BrowserWindow} = require('electron');
-const electron = require("electron");
+const {app, BrowserWindow, desktopCapturer, screen, ipcMain} = require('electron');
+const path = require('path');
 
 const WIDTH_WINDOW = 290;
 const HEIGHT_WINDOW = 80;
 
 function createWindow() {
-    const { width, height } = electron.screen.getPrimaryDisplay().size;
+    const {width, height} = screen.getPrimaryDisplay().size;
     const win = new BrowserWindow({
         width: WIDTH_WINDOW,
         height: HEIGHT_WINDOW,
@@ -16,13 +16,19 @@ function createWindow() {
         transparent: true,
         frame: false,
         webPreferences: {
-            //preload: path.join(__dirname, 'preload.js')
+            nodeIntegration: false,
+            contextIsolation: true,
+            preload: path.join(__dirname, 'Recorder.js')
         }
     })
 
     win.loadFile('index.html');
     //win.openDevTools();
 }
+
+ipcMain.handle('get-sources', async (event) => {
+    return await desktopCapturer.getSources({types: ['screen']});
+})
 
 app.whenReady().then(() => {
     createWindow()

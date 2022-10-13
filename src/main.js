@@ -4,9 +4,9 @@ import App from "./components/App";
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faDoorOpen, faPlay, faVectorSquare, faImage } from '@fortawesome/free-solid-svg-icons';
+import { faDoorOpen, faPlay, faVectorSquare, faImage, faSquare } from '@fortawesome/free-solid-svg-icons';
 
-library.add(faDoorOpen, faPlay, faVectorSquare, faImage);
+library.add(faDoorOpen, faPlay, faVectorSquare, faImage, faSquare);
 
 Vue.component('fa-icon', FontAwesomeIcon);
 

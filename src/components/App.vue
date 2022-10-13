@@ -1,10 +1,11 @@
 <template>
   <div id="root">
     <div class="app">
-      <Button label="cut" icon="vector-square"/>
-      <Button label="screen" icon="image"/>
-      <Button label="start" icon="play"/>
-      <Button label="exit" icon="door-open" @click="closeApp"/>
+      <Button label="cut" icon="vector-square" :is-disable="isRecording"/>
+      <Button label="screen" icon="image" :is-disable="isRecording"/>
+      <Button v-if="recorder === null" label="start" icon="play" @click="startRecord"/>
+      <Button v-else label="stop" icon="square" @click="stopRecord"/>
+      <Button label="exit" icon="door-open" @click="closeApp" :is-disable="isRecording"/>
     </div>
   </div>
 </template>
@@ -17,9 +18,31 @@ export default {
   components: {
     Button
   },
+  data() {
+    return {
+      recorder: null
+    };
+  },
   methods: {
+    startRecord() {
+      window.recorder.start()
+          .then(recorder => {
+            this.recorder = recorder;
+          });
+    },
+    stopRecord() {
+      if (this.recorder) {
+        this.recorder();
+        this.recorder = null;
+      }
+    },
     closeApp() {
       window.close();
+    },
+  },
+  computed: {
+    isRecording() {
+      return this.recorder !== null;
     }
   }
 }
@@ -31,6 +54,7 @@ export default {
   height: 100%;
   display: flex;
 }
+
 .app {
   flex: 1;
   display: flex;
