@@ -21,7 +21,7 @@ function Recorder() {
     }
 
     function handleErrors(error) {
-        console.log(error)
+        ipcRenderer.invoke('show-notification', 'Error', error);
     }
 
     function saveFile(src) {

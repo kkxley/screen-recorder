@@ -1,4 +1,4 @@
-const {app, BrowserWindow, desktopCapturer, screen, ipcMain} = require('electron');
+const {app, BrowserWindow, desktopCapturer, screen, ipcMain, Notification} = require('electron');
 const path = require('path');
 
 const WIDTH_WINDOW = 290;
@@ -26,9 +26,13 @@ function createWindow() {
     //win.openDevTools();
 }
 
-ipcMain.handle('get-sources', async (event) => {
+ipcMain.handle('get-sources', async () => {
     return await desktopCapturer.getSources({types: ['screen']});
-})
+});
+
+ipcMain.handle('show-notification', async (event, {title, body}) => {
+    new Notification({ title, body }).show()
+});
 
 app.whenReady().then(() => {
     createWindow()
