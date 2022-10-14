@@ -1,6 +1,6 @@
 const {ipcRenderer, contextBridge} = require('electron');
 
-function Recorder() {
+function Recorder(sourceId) {
 
     function handleStream(stream) {
         const recorder = new MediaRecorder(stream);
@@ -15,8 +15,8 @@ function Recorder() {
             handleErrors(e.error);
         };
         recorder.start();
-        return () => {
-            recorder.stop();
+        return {
+            stopRecording: () => recorder.stop()
         };
     }
 
@@ -37,14 +37,12 @@ function Recorder() {
 
     return (async function startRecord() {
         try {
-            const sources = await ipcRenderer.invoke('get-sources');
-            const source = sources[0];
             const stream = await navigator.mediaDevices.getUserMedia({
                 audio: false,
                 video: {
                     mandatory: {
                         chromeMediaSource: "desktop",
-                        chromeMediaSourceId: source.id,
+                        chromeMediaSourceId: sourceId,
                         minWidth: 1280,
                         maxWidth: 1280,
                         minHeight: 720,
@@ -61,5 +59,9 @@ function Recorder() {
 }
 
 contextBridge.exposeInMainWorld('recorder', {
-    start: () => Recorder()
+    afterStartRecord: (callback) => ipcRenderer.on(
+        'context-menu-command',
+        (e, sourceId) => Recorder(sourceId).then(callback)
+    ),
+    showSources: () => ipcRenderer.send('show-context-menu')
 })

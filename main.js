@@ -1,4 +1,4 @@
-const {app, BrowserWindow, desktopCapturer, screen, ipcMain, Notification} = require('electron');
+const {app, Menu, BrowserWindow, desktopCapturer, screen, ipcMain, Notification} = require('electron');
 const path = require('path');
 
 const WIDTH_WINDOW = 290;
@@ -26,13 +26,23 @@ function createWindow() {
     //win.openDevTools();
 }
 
-ipcMain.handle('get-sources', async () => {
-    return await desktopCapturer.getSources({types: ['screen']});
+ipcMain.handle('show-notification', async (event, {title, body}) => {
+    new Notification({title, body}).show()
 });
 
-ipcMain.handle('show-notification', async (event, {title, body}) => {
-    new Notification({ title, body }).show()
-});
+ipcMain.on('show-context-menu', async (event) => {
+    const sources = await desktopCapturer.getSources({types: ['window', 'screen']});
+
+    const template = sources.map(source => ({
+        label: source.name,
+        click: () => {
+            event.sender.send('context-menu-command', source.id)
+        }
+    }));
+
+    const menu = Menu.buildFromTemplate(template)
+    menu.popup(BrowserWindow.fromWebContents(event.sender))
+})
 
 app.whenReady().then(() => {
     createWindow()

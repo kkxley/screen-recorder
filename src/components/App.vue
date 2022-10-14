@@ -23,16 +23,18 @@ export default {
       recorder: null
     };
   },
+  created() {
+    window.recorder.afterStartRecord((recorder) => {
+      this.recorder = recorder;
+    });
+  },
   methods: {
     startRecord() {
-      window.recorder.start()
-          .then(recorder => {
-            this.recorder = recorder;
-          });
+      window.recorder.showSources();
     },
     stopRecord() {
-      if (this.recorder) {
-        this.recorder();
+      if (this.recorder.stopRecording) {
+        this.recorder.stopRecording();
         this.recorder = null;
       }
     },
